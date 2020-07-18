@@ -1,0 +1,9 @@
+.card {
+  max-width: 320px;
+  margin-top: 20px;
+}
+
+.buyButton {
+  background-color: #fd1d1d!important;
+  color: #ffffff!important;
+}

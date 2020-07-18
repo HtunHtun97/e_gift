@@ -1,0 +1,21 @@
+.Shop {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.Preview {
+  padding-left: 20px;
+  text-align: center;
+}
+
+.PreviewContent {
+  display: flex;
+  justify-content: space-between;
+  text-align: right;
+}
+
+.PaymentBtn {
+  background-color: #fd1d1d !important;
+  color: #ffffff !important;
+}
