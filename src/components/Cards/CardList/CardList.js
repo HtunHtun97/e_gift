@@ -12,7 +12,7 @@ class CardList extends Component {
     giftCards: [],
     loading: false,
     showModal: false,
-    giftCardId: null,
+    giftCardId: "",
     modalStatus: 0,
     confirmedData: {},
   };
@@ -32,6 +32,7 @@ class CardList extends Component {
   }
 
   buyClickedHandler = (id) => {
+    console.log(id);
     this.setState({ showModal: true, giftCardId: id, modalStatus: 1 });
   };
 
@@ -39,20 +40,33 @@ class CardList extends Component {
     this.setState({ showModal: false, modalStatus: 0 });
   };
 
-  clickedPayment = (txnId) => {
-    // event.preventDefault();
+  clickedPayment = (event, txnId) => {
+    event.preventDefault();
+    this.setState({ loading: true });
     console.log(txnId);
     const reqBody = {
       txnId: txnId,
     };
-    axios.post("/confirmPurchase", reqBody).then((response) => {
-      console.log(response);
-      this.setState({
-        confirmedData: response.data,
-        showComfirm: true,
-        modalStatus: 1,
+    axios
+      .post("/confirmPurchase", reqBody)
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          confirmedData: response.data,
+          showComfirm: true,
+          modalStatus: 0,
+          loading: false,
+        });
+      })
+      .then((error) => {
+        this.setState({ loading: false });
       });
-    });
+  };
+
+  copyToClickBoard = (event) => {
+    document.execCommand("copy");
+    event.target.focus();
+    this.setState({ copySuccess: "Copied!" });
   };
 
   render() {
@@ -76,13 +90,14 @@ class CardList extends Component {
           </div>
           <div style={{ textAlign: "center" }}>
             <p>Your pin code is here</p>
-            <Button style={{ background: "#ccc" }}>
+            <Button style={{ background: "#ccc" }} id="copyText">
               {this.state.confirmedData.pinCode}
             </Button>
           </div>
           <div
             className="PaymentBtn"
             style={{ textAlign: "center", marginTop: "20px" }}
+            onClick={this.copyToClickBoard}
           >
             COPY PIN CODE
           </div>
@@ -97,7 +112,7 @@ class CardList extends Component {
           show={this.state.showModal}
           modalClosed={this.modalClosedHandler}
         >
-          {this.modalStatus === 0 ? (
+          {this.state.modalStatus === 1 ? (
             this.state.giftCardId ? (
               <Shop id={this.state.giftCardId} clicked={this.clickedPayment} />
             ) : null

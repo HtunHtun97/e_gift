@@ -15,6 +15,7 @@ class Shop extends Component {
     showComfirm: false,
     modalStatus: 0,
   };
+
   componentDidMount() {
     this.setState({ loading: true });
     const reqBody = {
@@ -23,12 +24,13 @@ class Shop extends Component {
     axios
       .post("/purchaseCard", reqBody)
       .then((response) => {
-        this.setState({
-          previewData: response.data,
-          loading: false,
-          qrString: response.data.qrString,
-        });
-        console.log(this.state.previewData);
+        if (response.data) {
+          this.setState({
+            previewData: response.data,
+            loading: false,
+            qrString: response.data.qrString,
+          });
+        }
       })
       .catch((error) => {
         this.setState({ loading: false });
@@ -45,11 +47,9 @@ class Shop extends Component {
       <Auxiliary>
         <div>
           <h2>Google Playstore USA</h2>
-          {previewData ? (
-            <div>
-              <QRCode value={this.state.qrString} />
-            </div>
-          ) : null}
+          <div>
+            <QRCode value={this.state.qrString} />
+          </div>
         </div>
         <div className="Preview">
           <h2 style={{ textAlign: "center" }}>eGift Shop</h2>
@@ -76,7 +76,9 @@ class Shop extends Component {
           </div>
           <Button
             className="PaymentBtn"
-            onClick={() => this.props.clicked(previewData && previewData.txnId)}
+            onClick={(event) =>
+              this.props.clicked(event, previewData && previewData.txnId)
+            }
           >
             Payment
           </Button>
